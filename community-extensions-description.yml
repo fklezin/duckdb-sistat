@@ -1,0 +1,19 @@
+# This file is a description of your extension that is used to register it with the community repository
+# The file should be named 'community-extensions-description.yml'
+
+extension:
+  name: sistat
+  description: DuckDB extension for SURS SiStat (Slovenia’s PX-Web API)
+  version: 0.0.1
+  language: C++-11
+  license: MIT
+  maintainers:
+    - fklezin
+  tags: [api, statistics, open-data]
+
+repo:
+  github: fklezin/duckdb-sistat
+  ref: main
+
+build:
+  cmake_args: []

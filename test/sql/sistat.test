@@ -1,0 +1,16 @@
+# name: test/sql/sistat.test
+# description: Test sistat extension
+# group: [sistat]
+
+# Before we load the extension, this will fail
+statement error
+SELECT * FROM SISTAT_Tables();
+----
+Catalog Error: Table with name SISTAT_Tables does not exist!
+
+# Load the extension
+load __TEST_BUILD_LOCATION__/sistat
+
+# Confirm it loaded by checking if the function exists
+statement ok
+SELECT * FROM SISTAT_Tables() WHERE 1=0;
