@@ -9,13 +9,13 @@
 
 namespace duckdb {
 
-static void LoadInternal(DatabaseInstance &db) {
-	SistatDataFunctions::Register(db);
-	SistatInfoFunctions::Register(db);
+static void LoadInternal(ExtensionLoader &loader) {
+	SistatDataFunctions::Register(loader);
+	SistatInfoFunctions::Register(loader);
 }
 
 void SistatExtension::Load(ExtensionLoader &db) {
-	LoadInternal(db.GetDatabaseInstance());
+	LoadInternal(db);
 }
 
 std::string SistatExtension::Name() {
@@ -36,7 +36,7 @@ extern "C" {
 
 DUCKDB_EXTENSION_API void sistat_init(duckdb::DatabaseInstance &db) {
     duckdb::DuckDB db_wrapper(db);
-    db_wrapper.LoadExtension<duckdb::SistatExtension>();
+    db_wrapper.LoadStaticExtension<duckdb::SistatExtension>();
 }
 
 DUCKDB_EXTENSION_API const char *sistat_version() {

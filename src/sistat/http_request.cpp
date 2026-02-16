@@ -65,9 +65,9 @@ HttpSettings HttpRequest::ExtractHttpSettings(ClientContext &context, const stri
 	FileOpener::TryGetCurrentSetting(&opener, "http_timeout", settings.timeout, &info);
 	FileOpener::TryGetCurrentSetting(&opener, "http_keep_alive", settings.keep_alive, &info);
 
-	settings.proxy = HTTPProxy::GetSetting(context).ToString();
-	settings.proxy_username = HTTPProxyUsername::GetSetting(context).ToString();
-	settings.proxy_password = HTTPProxyPassword::GetSetting(context).ToString();
+	settings.proxy = HTTPProxySetting::GetSetting(context).ToString();
+	settings.proxy_username = HTTPProxyUsernameSetting::GetSetting(context).ToString();
+	settings.proxy_password = HTTPProxyPasswordSetting::GetSetting(context).ToString();
 
 	string custom_user_agent;
 	if (FileOpener::TryGetCurrentSetting(&opener, "http_user_agent", custom_user_agent, &info) &&

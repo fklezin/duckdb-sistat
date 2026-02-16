@@ -1,6 +1,6 @@
 #include "sistat_info_functions.hpp"
 #include "duckdb/main/client_context.hpp"
-#include "duckdb/main/extension_util.hpp"
+#include "duckdb/main/extension/extension_loader.hpp"
 #include "duckdb/function/table_function.hpp"
 #include "duckdb/common/string_util.hpp"
 #include "yyjson.hpp"
@@ -135,11 +135,11 @@ struct SISTAT_Tables_Impl {
 		output.SetCardinality(count);
 	}
 
-	static void Register(DatabaseInstance &db) {
+	static void Register(ExtensionLoader &loader) {
 
 		TableFunction func("SISTAT_Tables", {}, Execute, Bind, Init);
 		func.named_parameters["language"] = LogicalType::VARCHAR;
-        ExtensionUtil::RegisterFunction(db, func);
+        loader.RegisterFunction(func);
 	}
 };
 
@@ -297,19 +297,19 @@ struct SISTAT_DataStructure_Impl {
 		output.SetCardinality(count);
 	}
 
-	static void Register(DatabaseInstance &db) {
+	static void Register(ExtensionLoader &loader) {
 
 		TableFunction func("SISTAT_DataStructure", {LogicalType::VARCHAR}, Execute, Bind, Init);
 		func.named_parameters["language"] = LogicalType::VARCHAR;
-        ExtensionUtil::RegisterFunction(db, func);
+        loader.RegisterFunction(func);
 	}
 };
 
 } // namespace
 
-void SistatInfoFunctions::Register(DatabaseInstance &db) {
-	SISTAT_Tables_Impl::Register(db);
-	SISTAT_DataStructure_Impl::Register(db);
+void SistatInfoFunctions::Register(ExtensionLoader &loader) {
+	SISTAT_Tables_Impl::Register(loader);
+	SISTAT_DataStructure_Impl::Register(loader);
 }
 
 } // namespace duckdb

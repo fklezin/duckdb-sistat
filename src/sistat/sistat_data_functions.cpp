@@ -1,6 +1,6 @@
 #include "sistat_data_functions.hpp"
 #include "duckdb/main/client_context.hpp"
-#include "duckdb/main/extension_util.hpp"
+#include "duckdb/main/extension/extension_loader.hpp"
 #include "duckdb/function/table_function.hpp"
 #include "duckdb/common/string_util.hpp"
 #include "yyjson.hpp"
@@ -303,18 +303,18 @@ struct SISTAT_Read_Impl {
 		output.SetCardinality(count);
 	}
 
-	static void Register(DatabaseInstance &db) {
+	static void Register(ExtensionLoader &loader) {
 
 		TableFunction func("SISTAT_Read", {LogicalType::VARCHAR}, Execute, Bind, Init);
 		func.named_parameters["language"] = LogicalType::VARCHAR;
-        ExtensionUtil::RegisterFunction(db, func);
+        loader.RegisterFunction(func);
 	}
 };
 
 } // namespace
 
-void SistatDataFunctions::Register(DatabaseInstance &db) {
-	SISTAT_Read_Impl::Register(db);
+void SistatDataFunctions::Register(ExtensionLoader &loader) {
+	SISTAT_Read_Impl::Register(loader);
 }
 
 } // namespace duckdb
