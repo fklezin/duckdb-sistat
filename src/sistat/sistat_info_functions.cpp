@@ -7,21 +7,21 @@
 #include "sistat.hpp"
 #include "http_request.hpp"
 
-using duckdb_yyjson::yyjson_doc;
-using duckdb_yyjson::yyjson_val;
-using duckdb_yyjson::yyjson_read;
-using duckdb_yyjson::yyjson_doc_get_root;
-using duckdb_yyjson::yyjson_is_arr;
-using duckdb_yyjson::yyjson_arr_size;
 using duckdb_yyjson::yyjson_arr_get;
-using duckdb_yyjson::yyjson_is_obj;
-using duckdb_yyjson::yyjson_obj_get;
-using duckdb_yyjson::yyjson_is_str;
-using duckdb_yyjson::yyjson_get_str;
+using duckdb_yyjson::yyjson_arr_size;
+using duckdb_yyjson::yyjson_doc;
 using duckdb_yyjson::yyjson_doc_free;
+using duckdb_yyjson::yyjson_doc_get_root;
+using duckdb_yyjson::yyjson_get_str;
+using duckdb_yyjson::yyjson_is_arr;
+using duckdb_yyjson::yyjson_is_obj;
+using duckdb_yyjson::yyjson_is_str;
+using duckdb_yyjson::yyjson_obj_get;
+using duckdb_yyjson::yyjson_read;
+using duckdb_yyjson::yyjson_val;
 using duckdb_yyjson::yyjson_val_write;
-using duckdb_yyjson::yyjson_val_write_opts;
 using duckdb_yyjson::yyjson_val_write_file;
+using duckdb_yyjson::yyjson_val_write_opts;
 
 namespace duckdb {
 
