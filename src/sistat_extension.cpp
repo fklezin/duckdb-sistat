@@ -35,11 +35,11 @@ std::string SistatExtension::Version() const {
 extern "C" {
 
 DUCKDB_EXTENSION_API void sistat_init(duckdb::DatabaseInstance &db) {
-    duckdb::DuckDB db_wrapper(db);
-    db_wrapper.LoadStaticExtension<duckdb::SistatExtension>();
+	duckdb::DuckDB db_wrapper(db);
+	db_wrapper.LoadStaticExtension<duckdb::SistatExtension>();
 }
 
 DUCKDB_EXTENSION_API const char *sistat_version() {
-    return duckdb::DuckDB::LibraryVersion();
+	return duckdb::DuckDB::LibraryVersion();
 }
 }

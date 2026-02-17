@@ -14,8 +14,7 @@ inline string TableUrl(const string &lang, const string &table_id) {
 }
 
 inline string NormalizeTableId(const string &table_id) {
-	if (table_id.size() >= 3 &&
-	    table_id[table_id.size() - 3] == '.' &&
+	if (table_id.size() >= 3 && table_id[table_id.size() - 3] == '.' &&
 	    (table_id[table_id.size() - 2] == 'p' || table_id[table_id.size() - 2] == 'P') &&
 	    (table_id[table_id.size() - 1] == 'x' || table_id[table_id.size() - 1] == 'X')) {
 		return table_id;

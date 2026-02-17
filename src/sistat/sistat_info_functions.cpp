@@ -47,8 +47,7 @@ struct SISTAT_Tables_Impl {
 			lang = sistat::DEFAULT_LANGUAGE;
 		}
 
-		string list_url =
-		    string(sistat::BASE_URL) + lang + "/" + sistat::DATA_PATH;
+		string list_url = string(sistat::BASE_URL) + lang + "/" + sistat::DATA_PATH;
 
 		names.emplace_back("title");
 		return_types.push_back(LogicalType::VARCHAR);
@@ -69,8 +68,7 @@ struct SISTAT_Tables_Impl {
 		State *state_ptr = static_cast<State *>(state.get());
 
 		HttpSettings settings = HttpRequest::ExtractHttpSettings(context, bind_data.list_url);
-		HttpResponseData resp =
-		    HttpRequest::ExecuteHttpRequest(settings, bind_data.list_url, "GET", {}, "", "");
+		HttpResponseData resp = HttpRequest::ExecuteHttpRequest(settings, bind_data.list_url, "GET", {}, "", "");
 
 		if (!resp.error.empty()) {
 			throw IOException("SISTAT_Tables: %s", resp.error.c_str());
@@ -139,7 +137,7 @@ struct SISTAT_Tables_Impl {
 
 		TableFunction func("SISTAT_Tables", {}, Execute, Bind, Init);
 		func.named_parameters["language"] = LogicalType::VARCHAR;
-        loader.RegisterFunction(func);
+		loader.RegisterFunction(func);
 	}
 };
 
@@ -150,8 +148,7 @@ struct SISTAT_DataStructure_Impl {
 		string table_url;
 		string language;
 		BindData(string table_id_p, string table_url_p, string language_p)
-		    : table_id(std::move(table_id_p)), table_url(std::move(table_url_p)),
-		      language(std::move(language_p)) {
+		    : table_id(std::move(table_id_p)), table_url(std::move(table_url_p)), language(std::move(language_p)) {
 		}
 	};
 
@@ -228,8 +225,7 @@ struct SISTAT_DataStructure_Impl {
 		State *state_ptr = static_cast<State *>(state.get());
 
 		HttpSettings settings = HttpRequest::ExtractHttpSettings(context, bind_data.table_url);
-		HttpResponseData resp =
-		    HttpRequest::ExecuteHttpRequest(settings, bind_data.table_url, "GET", {}, "", "");
+		HttpResponseData resp = HttpRequest::ExecuteHttpRequest(settings, bind_data.table_url, "GET", {}, "", "");
 
 		if (!resp.error.empty()) {
 			throw IOException("SISTAT_DataStructure: %s", resp.error.c_str());
@@ -301,7 +297,7 @@ struct SISTAT_DataStructure_Impl {
 
 		TableFunction func("SISTAT_DataStructure", {LogicalType::VARCHAR}, Execute, Bind, Init);
 		func.named_parameters["language"] = LogicalType::VARCHAR;
-        loader.RegisterFunction(func);
+		loader.RegisterFunction(func);
 	}
 };
 

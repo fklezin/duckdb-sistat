@@ -31,8 +31,8 @@ struct SISTAT_Read_Impl {
 		string language;
 		vector<string> dimension_names;
 		BindData(string table_id_p, string table_url_p, string language_p, vector<string> dimension_names_p)
-		    : table_id(std::move(table_id_p)), table_url(std::move(table_url_p)),
-		      language(std::move(language_p)), dimension_names(std::move(dimension_names_p)) {
+		    : table_id(std::move(table_id_p)), table_url(std::move(table_url_p)), language(std::move(language_p)),
+		      dimension_names(std::move(dimension_names_p)) {
 		}
 	};
 
@@ -137,8 +137,8 @@ struct SISTAT_Read_Impl {
 		string body = BuildQueryJson(bind_data.dimension_names);
 		HttpSettings settings = HttpRequest::ExtractHttpSettings(context, bind_data.table_url);
 		duckdb_httplib_openssl::Headers headers;
-		HttpResponseData resp = HttpRequest::ExecuteHttpRequest(settings, bind_data.table_url, "POST", headers, body,
-		                                                        "application/json");
+		HttpResponseData resp =
+		    HttpRequest::ExecuteHttpRequest(settings, bind_data.table_url, "POST", headers, body, "application/json");
 
 		if (!resp.error.empty()) {
 			throw IOException("SISTAT_Read: %s", resp.error.c_str());
@@ -307,7 +307,7 @@ struct SISTAT_Read_Impl {
 
 		TableFunction func("SISTAT_Read", {LogicalType::VARCHAR}, Execute, Bind, Init);
 		func.named_parameters["language"] = LogicalType::VARCHAR;
-        loader.RegisterFunction(func);
+		loader.RegisterFunction(func);
 	}
 };
 

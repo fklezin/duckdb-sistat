@@ -1,6 +1,6 @@
 # name: test/sql/sistat.test
 # description: Test sistat extension
-# group: [sistat]
+# group: [sql]
 
 # Before we load the extension, this will fail
 statement error
