@@ -22,6 +22,7 @@ using duckdb_yyjson::yyjson_val;
 using duckdb_yyjson::yyjson_val_write;
 using duckdb_yyjson::yyjson_val_write_file;
 using duckdb_yyjson::yyjson_val_write_opts;
+using duckdb_yyjson::YYJSON_WRITE_NOFLAG;
 
 namespace duckdb {
 

@@ -21,7 +21,6 @@ using duckdb_yyjson::yyjson_is_num;
 using duckdb_yyjson::yyjson_is_obj;
 using duckdb_yyjson::yyjson_is_str;
 using duckdb_yyjson::yyjson_is_uint;
-using duckdb_yyjson::yyjson_obj_foreach;
 using duckdb_yyjson::yyjson_obj_get;
 using duckdb_yyjson::yyjson_read;
 using duckdb_yyjson::yyjson_val;
