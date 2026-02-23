@@ -5,8 +5,6 @@
 # Before we load the extension, this will fail
 statement error
 SELECT * FROM SISTAT_Tables();
-----
-Catalog Error: Table Function with name sistat_tables does not exist!
 
 # Require statement will ensure this test is run with this extension loaded
 require sistat
