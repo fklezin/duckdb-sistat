@@ -8,8 +8,8 @@ SELECT * FROM SISTAT_Tables();
 ----
 Catalog Error: Table Function with name sistat_tables does not exist!
 
-# Load the extension
-load __TEST_BUILD_LOCATION__/sistat
+# Require statement will ensure this test is run with this extension loaded
+require sistat
 
 # Confirm it loaded by checking if the function exists
 statement ok
