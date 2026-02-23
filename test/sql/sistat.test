@@ -6,7 +6,7 @@
 statement error
 SELECT * FROM SISTAT_Tables();
 ----
-Catalog Error: Table Function with name sistat_tables does not exist! Did you mean "histogram_values"?  LINE 1: SELECT * FROM SISTAT_Tables();                       ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Catalog Error: Table Function with name sistat_tables does not exist!
 
 # Load the extension
 load __TEST_BUILD_LOCATION__/sistat
