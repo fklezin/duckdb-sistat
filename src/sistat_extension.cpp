@@ -45,6 +45,10 @@ DUCKDB_EXTENSION_API void sistat_init(duckdb::DatabaseInstance &db) {
 	db_wrapper.LoadStaticExtension<duckdb::SistatExtension>();
 }
 
+DUCKDB_EXTENSION_API void sistat_duckdb_cpp_init(duckdb::DatabaseInstance &db) {
+	sistat_init(db);
+}
+
 DUCKDB_EXTENSION_API const char *sistat_version() {
 	return duckdb::DuckDB::LibraryVersion();
 }
