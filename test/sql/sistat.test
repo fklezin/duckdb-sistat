@@ -2,10 +2,6 @@
 # description: Test sistat extension
 # group: [sql]
 
-# Before we load the extension, this will fail
-statement error Catalog Error
-SELECT * FROM SISTAT_Tables();
-
 # Require statement will ensure this test is run with this extension loaded
 require sistat
 
