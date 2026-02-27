@@ -30,6 +30,12 @@ build_loadable_extension(${TARGET_NAME} " " ${EXTENSION_SOURCES})
 if(NOT SISTAT_WASM_BUILD)
     target_link_libraries(${EXTENSION_NAME} OpenSSL::SSL OpenSSL::Crypto)
     target_link_libraries(${LOADABLE_EXTENSION_NAME} OpenSSL::SSL OpenSSL::Crypto)
+
+    if(WIN32)
+        # Static OpenSSL builds on Windows require these system libraries.
+        target_link_libraries(${EXTENSION_NAME} ws2_32 crypt32 bcrypt)
+        target_link_libraries(${LOADABLE_EXTENSION_NAME} ws2_32 crypt32 bcrypt)
+    endif()
 endif()
 
 install(
