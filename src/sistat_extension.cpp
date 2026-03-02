@@ -32,14 +32,12 @@ std::string SistatExtension::Version() const {
 
 } // namespace duckdb
 
+#ifdef DUCKDB_BUILD_LOADABLE_EXTENSION
 extern "C" {
 
-DUCKDB_EXTENSION_API void sistat_init(duckdb::DatabaseInstance &db) {
-	duckdb::DuckDB db_wrapper(db);
-	db_wrapper.LoadStaticExtension<duckdb::SistatExtension>();
+DUCKDB_CPP_EXTENSION_ENTRY(sistat, loader) {
+	duckdb::LoadInternal(loader);
 }
 
-DUCKDB_EXTENSION_API const char *sistat_version() {
-	return duckdb::DuckDB::LibraryVersion();
 }
-}
+#endif
