@@ -14,8 +14,6 @@ endif()
 
 if(SISTAT_HTTP_BUILD)
     find_package(OpenSSL REQUIRED)
-else()
-    add_definitions(-DSISTAT_DISABLE_HTTP)
 endif()
 
 set(EXTENSION_NAME ${TARGET_NAME}_extension)
@@ -35,6 +33,11 @@ endif()
 
 build_static_extension(${TARGET_NAME} ${EXTENSION_SOURCES})
 build_loadable_extension(${TARGET_NAME} " " ${EXTENSION_SOURCES})
+
+if(NOT SISTAT_HTTP_BUILD)
+    target_compile_definitions(${EXTENSION_NAME} PRIVATE SISTAT_DISABLE_HTTP)
+    target_compile_definitions(${LOADABLE_EXTENSION_NAME} PRIVATE SISTAT_DISABLE_HTTP)
+endif()
 
 if(SISTAT_HTTP_BUILD)
     target_link_libraries(${EXTENSION_NAME} OpenSSL::SSL OpenSSL::Crypto)
