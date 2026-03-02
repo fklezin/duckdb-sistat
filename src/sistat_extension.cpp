@@ -2,7 +2,7 @@
 
 #include "sistat_extension.hpp"
 #include "duckdb.hpp"
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(SISTAT_DISABLE_HTTP)
 #include "sistat/sistat_data_functions.hpp"
 #include "sistat/sistat_info_functions.hpp"
 #endif
@@ -12,7 +12,7 @@
 namespace duckdb {
 
 static void LoadInternal(ExtensionLoader &loader) {
-#ifndef __EMSCRIPTEN__
+#if !defined(__EMSCRIPTEN__) && !defined(SISTAT_DISABLE_HTTP)
 	SistatDataFunctions::Register(loader);
 	SistatInfoFunctions::Register(loader);
 #else

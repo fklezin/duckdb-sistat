@@ -5,8 +5,17 @@ set(TARGET_NAME sistat)
 set(SISTAT_WASM_BUILD OFF)
 if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
     set(SISTAT_WASM_BUILD ON)
-else()
+endif()
+
+set(SISTAT_HTTP_BUILD ON)
+if(SISTAT_WASM_BUILD OR MINGW)
+    set(SISTAT_HTTP_BUILD OFF)
+endif()
+
+if(SISTAT_HTTP_BUILD)
     find_package(OpenSSL REQUIRED)
+else()
+    add_definitions(-DSISTAT_DISABLE_HTTP)
 endif()
 
 set(EXTENSION_NAME ${TARGET_NAME}_extension)
@@ -20,14 +29,14 @@ include_directories(third_party/httplib)
 # Define sources: Main entry point + library logic
 set(EXTENSION_SOURCES src/sistat_extension.cpp)
 # This includes files defined in src/sistat/CMakeLists.txt
-if(NOT SISTAT_WASM_BUILD)
+if(SISTAT_HTTP_BUILD)
     add_subdirectory(src/sistat)
 endif()
 
 build_static_extension(${TARGET_NAME} ${EXTENSION_SOURCES})
 build_loadable_extension(${TARGET_NAME} " " ${EXTENSION_SOURCES})
 
-if(NOT SISTAT_WASM_BUILD)
+if(SISTAT_HTTP_BUILD)
     target_link_libraries(${EXTENSION_NAME} OpenSSL::SSL OpenSSL::Crypto)
     target_link_libraries(${LOADABLE_EXTENSION_NAME} OpenSSL::SSL OpenSSL::Crypto)
 
