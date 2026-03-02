@@ -38,6 +38,5 @@ extern "C" {
 DUCKDB_CPP_EXTENSION_ENTRY(sistat, loader) {
 	duckdb::LoadInternal(loader);
 }
-
 }
 #endif
