@@ -131,17 +131,8 @@ struct SISTAT_Read_Impl {
 		return make_uniq_base<FunctionData, BindData>(normalized_id, table_url, lang, dimension_names);
 	}
 
-	static string BuildQueryJson(const vector<string> &dimension_names) {
-
-		string s = "{\"query\":[";
-		for (size_t i = 0; i < dimension_names.size(); i++) {
-			if (i > 0) {
-				s += ",";
-			}
-			s += "{\"code\":\"" + dimension_names[i] + "\",\"selection\":{\"filter\":\"all\",\"values\":[]}}";
-		}
-		s += "],\"response\":{\"format\":\"json-stat\"}}";
-		return s;
+	static string BuildQueryJson() {
+		return "{\"query\":[],\"response\":{\"format\":\"json-stat\"}}";
 	}
 
 	static unique_ptr<GlobalTableFunctionState> Init(ClientContext &context, TableFunctionInitInput &input) {
@@ -150,7 +141,7 @@ struct SISTAT_Read_Impl {
 		auto state = make_uniq_base<GlobalTableFunctionState, State>();
 		State *state_ptr = static_cast<State *>(state.get());
 
-		string body = BuildQueryJson(bind_data.dimension_names);
+		string body = BuildQueryJson();
 		HttpSettings settings = HttpRequest::ExtractHttpSettings(context, bind_data.table_url);
 		duckdb_httplib_openssl::Headers headers;
 		HttpResponseData resp =
