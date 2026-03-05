@@ -38,7 +38,8 @@ SELECT
     ELSE sort_code
   END AS grape_variety,
   ROUND(area_ha, 1) AS area_ha,
-  ROUND(100.0 * area_ha / filtered_total.total_area, 2) AS share_all_pct
+  ROUND(100.0 * area_ha / filtered_total.total_area, 2) AS share_all_pct,
+  repeat('#', CAST(ROUND(100.0 * area_ha / filtered_total.total_area) AS INTEGER)) AS bar
 FROM filtered, filtered_total
 ORDER BY area_ha DESC
 LIMIT 10;

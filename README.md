@@ -228,25 +228,11 @@ SELECT
     ELSE sort_code
   END AS grape_variety,
   ROUND(area_ha, 1) AS area_ha,
-  ROUND(100.0 * area_ha / filtered_total.total_area, 2) AS share_all_pct
+  ROUND(100.0 * area_ha / filtered_total.total_area, 2) AS share_all_pct,
+  repeat('#', CAST(ROUND(100.0 * area_ha / filtered_total.total_area) AS INTEGER)) AS bar
 FROM filtered, filtered_total
 ORDER BY area_ha DESC
 LIMIT 10;
-```
-
-Quick plot (area in hectares):
-
-```text
-Laski rizling   | ######################################## 1772.9
-Refosk          | ##############################           1331.6
-Chardonnay      | ##########################               1163.5
-Sauvignon       | ##########################               1154.2
-Malvazija       | ######################                    970.4
-Zametovka       | #################                         774.4
-Merlot          | ###############                           682.1
-Rumeni muskat   | ##############                            657.8
-Modra frankinja | ##############                            652.3
-Rebula          | #############                             612.7
 ```
 
 ## Configuration
