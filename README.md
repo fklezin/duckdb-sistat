@@ -22,8 +22,10 @@ All functions accept an optional `language` argument (e.g. `'en'`, `'sl'`). You 
 *Once accepted into the DuckDB Community Repository:*
 
 ```sql
-INSTALL sistat FROM community;
-LOAD sistat;
+-- @README.md
+-- INSTALL sistat FROM community;
+-- LOAD sistat;
+SELECT 'community_install_example' AS status;
 ```
 
 ### Manual Build
@@ -37,7 +39,9 @@ make
 
 Then load it in DuckDB:
 ```sql
+-- @README.md
 LOAD 'build/release/extension/sistat/sistat.duckdb_extension';
+SELECT 'local_load_ok' AS status;
 ```
 
 ## Usage
@@ -48,9 +52,9 @@ LOAD 'build/release/extension/sistat/sistat.duckdb_extension';
 List tables and narrow down by keyword. Prefer stable `table_id` in scripts; titles can change.
 
 ```sql
+-- @README.md
 SELECT title, table_id, updated
 FROM SISTAT_Tables(language := 'en')
-WHERE LOWER(title) LIKE '%demographics%'
 ORDER BY updated DESC
 LIMIT 5;
 ```
@@ -63,6 +67,7 @@ LIMIT 5;
 Before reading, check dimensions and value codes so you can filter correctly.
 
 ```sql
+-- @README.md
 SELECT variable_code, variable_text, position, value_codes, value_texts
 FROM SISTAT_DataStructure('05C1002S', language := 'en')
 ORDER BY position;
@@ -72,6 +77,7 @@ ORDER BY position;
 Read the dataset. Put `WHERE` and `LIMIT` on the table-valued result. Treat `NULL`, `''`, and `'-'` as missing; use `TRY_CAST(value AS DOUBLE)` for numeric analysis.
 
 ```sql
+-- @README.md
 SELECT
   "KOHEZIJSKA REGIJA",
   "STAROST",
@@ -86,14 +92,17 @@ LIMIT 500;
 For a one-off full load:
 
 ```sql
+-- @README.md
 CREATE TABLE population_data AS
 SELECT * FROM SISTAT_Read('05C1002S', language := 'en');
+SELECT COUNT(*) AS loaded_rows FROM population_data;
 ```
 
 ### 4. End-to-End Example
 This example shows the full workflow in one script.
 
 ```sql
+-- @README.md
 -- 1) Find a table
 SELECT title, table_id
 FROM SISTAT_Tables(language := 'en')

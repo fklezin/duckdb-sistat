@@ -1,0 +1,2 @@
+status
+community_install_example

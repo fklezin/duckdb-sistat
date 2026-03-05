@@ -28,6 +28,15 @@ jobs:
       - name: Build extension
         run: make
 
+      - name: Extract SQL blocks from README
+        run: ./scripts/extract_readme_sql.sh README.md examples/queries
+
+      - name: Execute README SQL blocks
+        run: ./scripts/run_readme_queries.sh examples/queries examples/results ./build/release/duckdb build/release/extension/sistat/sistat.duckdb_extension
+
+      - name: Verify examples are up to date
+        run: git diff --exit-code -- examples/queries examples/results
+
       - name: Count tables from SiStat API
         id: table_count
         shell: bash
@@ -50,6 +59,7 @@ jobs:
           {
             echo "## SiStat Table Count"
             echo ""
+            echo "- README SQL blocks executed: \`$(ls -1 examples/queries/readme_*.sql | wc -l)\`"
             echo "- Language: \`${{ steps.table_count.outputs.language }}\`"
             echo "- Tables available: **${{ steps.table_count.outputs.table_count }}**"
             echo "- Generated at (UTC): \`$(date -u '+%Y-%m-%d %H:%M:%S')\`"
