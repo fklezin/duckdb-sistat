@@ -1,6 +1,7 @@
 # DuckDB SiStat Extension
 
 [![CI](https://github.com/fklezin/duckdb-sistat/actions/workflows/MainDistributionPipeline.yml/badge.svg)](https://github.com/fklezin/duckdb-sistat/actions/workflows/MainDistributionPipeline.yml)
+[![SiStat Table Count](https://github.com/fklezin/duckdb-sistat/actions/workflows/SistatTableCount.yml/badge.svg)](https://github.com/fklezin/duckdb-sistat/actions/workflows/SistatTableCount.yml)
 
 Query Slovenia's [SiStat](https://pxweb.stat.si/sistat/sl/Home/Help) open data portal directly from DuckDB. No external Python scripts or ETL pipelines required — just SQL.
 
@@ -41,7 +42,7 @@ LOAD 'build/release/extension/sistat/sistat.duckdb_extension';
 
 ## Usage
 
-**Typical flow:** discover tables → pick a `table_id` → (optional) inspect structure → read data with `WHERE`/`LIMIT` as needed. For a full query guide and best practices, see [docs/sistat-queries.md](../docs/sistat-queries.md).
+**Typical flow:** discover tables → pick a `table_id` → (optional) inspect structure → read data with `WHERE`/`LIMIT` as needed.
 
 ### 1. Find Data Tables
 List tables and narrow down by keyword. Prefer stable `table_id` in scripts; titles can change.
@@ -89,13 +90,41 @@ CREATE TABLE population_data AS
 SELECT * FROM SISTAT_Read('05C1002S', language := 'en');
 ```
 
+### 4. End-to-End Example
+This example shows the full workflow in one script.
+
+```sql
+-- 1) Find a table
+SELECT title, table_id
+FROM SISTAT_Tables(language := 'en')
+WHERE LOWER(title) LIKE '%population%'
+LIMIT 1;
+
+-- 2) Inspect available dimensions
+SELECT variable_code, variable_text
+FROM SISTAT_DataStructure('05C1002S', language := 'en')
+ORDER BY position;
+
+-- 3) Materialize data locally
+CREATE OR REPLACE TABLE population_data AS
+SELECT *
+FROM SISTAT_Read('05C1002S', language := 'en')
+WHERE value IS NOT NULL AND value <> '' AND value <> '-';
+
+-- 4) Run analysis
+SELECT
+  "SPOL" AS sex_code,
+  AVG(TRY_CAST(value AS DOUBLE)) AS avg_value
+FROM population_data
+GROUP BY 1
+ORDER BY 1;
+```
+
 ### Querying tips
 - Start from **metadata** (`SISTAT_Tables`, then `SISTAT_DataStructure`) before reading large tables.
 - **Filter early** with `WHERE` on `SISTAT_Read(...)` to reduce transferred rows.
 - Prefer **explicit column selection** over `SELECT *` for stable queries.
 - For **reproducibility**, materialize a snapshot into a local table (e.g. with `CURRENT_TIMESTAMP`).
-
-Full patterns and examples: [docs/sistat-queries.md](../docs/sistat-queries.md).
 
 ## Configuration
 

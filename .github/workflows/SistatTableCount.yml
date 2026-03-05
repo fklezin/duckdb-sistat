@@ -1,0 +1,56 @@
+name: SiStat Table Count
+
+on:
+  workflow_dispatch:
+    inputs:
+      language:
+        description: "Language for SISTAT_Tables (e.g. en, sl)"
+        required: false
+        default: "en"
+  schedule:
+    - cron: "0 5 * * *"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  count-sistat-tables:
+    name: Count available SiStat tables
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build extension
+        run: make
+
+      - name: Count tables from SiStat API
+        id: table_count
+        shell: bash
+        env:
+          LANG_INPUT: ${{ github.event.inputs.language }}
+        run: |
+          set -euo pipefail
+
+          LANGUAGE="${LANG_INPUT:-en}"
+          COUNT="$(
+            ./build/release/duckdb -csv -c "SELECT COUNT(*) AS table_count FROM SISTAT_Tables(language := '${LANGUAGE}');" \
+              | tail -n 1
+          )"
+
+          echo "language=${LANGUAGE}" >> "${GITHUB_OUTPUT}"
+          echo "table_count=${COUNT}" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish summary
+        run: |
+          {
+            echo "## SiStat Table Count"
+            echo ""
+            echo "- Language: \`${{ steps.table_count.outputs.language }}\`"
+            echo "- Tables available: **${{ steps.table_count.outputs.table_count }}**"
+            echo "- Generated at (UTC): \`$(date -u '+%Y-%m-%d %H:%M:%S')\`"
+          } >> "${GITHUB_STEP_SUMMARY}"
