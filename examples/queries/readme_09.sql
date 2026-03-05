@@ -14,41 +14,46 @@ agg AS (
     AND TRY_CAST("LETO" AS INTEGER) = latest_year.y
   GROUP BY 1
 ),
-filtered AS (
-  SELECT *
-  FROM agg
-  WHERE sort_code <> '1.14'
+dim AS (
+  SELECT value_codes, value_texts
+  FROM SISTAT_DataStructure('1528317S', language := 'sl')
+  WHERE variable_code = 'VINSKE SORTE'
 ),
-labels(sort_code, grape_variety) AS (
-  VALUES
-    ('1.04', 'Laski rizling'),
-    ('2.08', 'Refosk'),
-    ('1.02', 'Chardonnay'),
-    ('1.09', 'Sauvignon'),
-    ('1.05', 'Malvazija'),
-    ('2.10', 'Zametovka'),
-    ('2.04', 'Merlot'),
-    ('1.08', 'Rumeni muskat'),
-    ('2.05', 'Modra frankinja'),
-    ('1.06', 'Rebula')
+labels AS (
+  SELECT
+    list_extract(code_list, i) AS sort_code,
+    list_extract(text_list, i) AS raw_name
+  FROM (
+    SELECT
+      string_split(replace(replace(replace(value_codes, '[', ''), ']', ''), '"', ''), ',') AS code_list,
+      string_split(replace(replace(replace(value_texts, '[', ''), ']', ''), '"', ''), ',') AS text_list
+    FROM dim
+  ) s,
+  range(1, length(code_list) + 1) t(i)
 ),
 named AS (
   SELECT
-    f.sort_code,
-    COALESCE(l.grape_variety, f.sort_code) AS grape_variety,
-    f.area_ha
-  FROM filtered f
-  LEFT JOIN labels l USING (sort_code)
+    a.sort_code,
+    trim(regexp_replace(l.raw_name, '^(Bele sorte- |Rdeče sorte- )', '')) AS grape_variety,
+    a.area_ha
+  FROM agg a
+  JOIN labels l USING (sort_code)
+),
+filtered AS (
+  SELECT *
+  FROM named
+  WHERE lower(grape_variety) NOT LIKE 'ostale %'
+    AND lower(grape_variety) <> 'ni podatka o sorti'
 ),
 filtered_total AS (
   SELECT SUM(area_ha) AS total_area
-  FROM named
+  FROM filtered
 )
 SELECT
   grape_variety,
   ROUND(area_ha, 1) AS area_ha,
   ROUND(100.0 * area_ha / filtered_total.total_area, 2) AS share_all_pct,
   repeat('#', CAST(ROUND(100.0 * area_ha / filtered_total.total_area) AS INTEGER)) AS bar
-FROM named, filtered_total
+FROM filtered, filtered_total
 ORDER BY area_ha DESC
 LIMIT 10;
