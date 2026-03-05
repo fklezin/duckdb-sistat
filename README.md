@@ -179,6 +179,82 @@ WHERE "PROIZVODNJA IN PORABA" = '1.1.'
   AND "LETO" = '2020';
 ```
 
+### Top 10 grape varieties (share of vineyards, latest year)
+
+Using SiStat table `1528317S.px`, aggregate vineyard area by grape variety and rank the top 10.
+This gives variety shares in the latest available year (`2020`) and includes examples like Refošk, Chardonnay, and Modra frankinja.
+
+```sql
+-- @README.md
+WITH latest_year AS (
+  SELECT MAX(TRY_CAST("LETO" AS INTEGER)) AS y
+  FROM SISTAT_Read('1528317S', language := 'sl')
+),
+agg AS (
+  SELECT
+    "VINSKE SORTE" AS sort_code,
+    SUM(TRY_CAST(value AS DOUBLE)) AS area_ha
+  FROM SISTAT_Read('1528317S', language := 'sl'), latest_year
+  WHERE value IS NOT NULL
+    AND value <> ''
+    AND TRY_CAST("LETO" AS INTEGER) = latest_year.y
+  GROUP BY 1
+),
+total AS (
+  SELECT SUM(area_ha) AS total_area
+  FROM agg
+)
+SELECT
+  CASE sort_code
+    WHEN '1.14' THEN 'Ostale bele sorte'
+    WHEN '1.04' THEN 'Laski rizling'
+    WHEN '2.08' THEN 'Refosk'
+    WHEN '1.02' THEN 'Chardonnay'
+    WHEN '1.09' THEN 'Sauvignon'
+    WHEN '1.05' THEN 'Malvazija'
+    WHEN '2.10' THEN 'Zametovka'
+    WHEN '2.04' THEN 'Merlot'
+    WHEN '1.08' THEN 'Rumeni muskat'
+    WHEN '2.05' THEN 'Modra frankinja'
+    ELSE sort_code
+  END AS grape_variety,
+  ROUND(area_ha, 1) AS area_ha,
+  ROUND(100.0 * area_ha / total.total_area, 2) AS share_all_pct
+FROM agg, total
+ORDER BY area_ha DESC
+LIMIT 10;
+```
+
+Current top 10 (2020):
+
+| Grape variety | Area (ha) | Share of all varieties (%) |
+|---|---:|
+| Ostale bele sorte | 1,823.7 | 11.96 |
+| Laski rizling | 1,772.9 | 11.62 |
+| Refosk | 1,331.6 | 8.73 |
+| Chardonnay | 1,163.5 | 7.63 |
+| Sauvignon | 1,154.2 | 7.57 |
+| Malvazija | 970.4 | 6.36 |
+| Zametovka | 774.4 | 5.08 |
+| Merlot | 682.1 | 4.47 |
+| Rumeni muskat | 657.8 | 4.31 |
+| Modra frankinja | 652.3 | 4.28 |
+
+Quick plot (area in hectares):
+
+```text
+Ostale bele sorte | ######################################## 1823.7
+Laski rizling     | #######################################  1772.9
+Refosk            | #############################            1331.6
+Chardonnay        | ##########################               1163.5
+Sauvignon         | #########################                1154.2
+Malvazija         | #####################                     970.4
+Zametovka         | #################                         774.4
+Merlot            | ###############                           682.1
+Rumeni muskat     | ##############                            657.8
+Modra frankinja   | ##############                            652.3
+```
+
 ## Configuration
 
 The extension uses DuckDB's built-in HTTP capabilities. It respects proxy settings if configured in DuckDB.
