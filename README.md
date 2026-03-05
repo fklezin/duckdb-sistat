@@ -135,6 +135,50 @@ ORDER BY 1;
 - Prefer **explicit column selection** over `SELECT *` for stable queries.
 - For **reproducibility**, materialize a snapshot into a local table (e.g. with `CURRENT_TIMESTAMP`).
 
+## Usecases
+
+### Which Slovenian wine region likely produces the most wine?
+
+SiStat exposes:
+- wine-growing-region vineyard area (`1528309S.px`, language `sl`)
+- national usable wine production in `1000 hl` (`1563407S.px`, code `PROIZVODNJA IN PORABA = '1.1.'`, year `2020`)
+
+There is currently no direct regional wine-production-in-litres table in the SiStat catalog.  
+For a practical estimate, allocate national usable production to wine regions by their share of vineyard area.
+
+Inputs used:
+- National usable production (2020): `725.46` thousand hl = `72,546,000` litres
+- Vineyard area shares (2020): Podravje `6,244.2 ha`, Posavje `2,552.1 ha`, Primorje `6,437.4 ha`
+
+Estimated litres by wine region (2020):
+
+| Region | Estimated litres | Share |
+|---|---:|---:|
+| Primorje | 30,656,217 | 42.26% |
+| Podravje | 29,736,160 | 40.99% |
+| Posavje | 12,153,623 | 16.75% |
+
+Quick plot (estimated, in million litres):
+
+```text
+Primorje | ############################### 30.66M
+Podravje | ##############################  29.74M
+Posavje  | ############                    12.15M
+```
+
+Reproducible national input query:
+
+```sql
+-- @README.md
+SELECT
+  "LETO" AS year,
+  TRY_CAST(value AS DOUBLE) AS usable_production_thousand_hl
+FROM SISTAT_Read('1563407S', language := 'en')
+WHERE "PROIZVODNJA IN PORABA" = '1.1.'
+  AND "VINO" = '00'
+  AND "LETO" = '2020';
+```
+
 ## Configuration
 
 The extension uses DuckDB's built-in HTTP capabilities. It respects proxy settings if configured in DuckDB.
