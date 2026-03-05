@@ -7,12 +7,23 @@ Query Slovenia's [SiStat](https://pxweb.stat.si/sistat/sl/Home/Help) open data p
 
 This extension integrates the **Statistical Office of the Republic of Slovenia (SURS)** data into your analytical workflows.
 
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Usecases](#usecases)
+- [Configuration](#configuration)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Features
 
 - **Discover Data**: List all 1000+ available datasets with `SISTAT_Tables(language := 'en')`.
 - **Inspect Metadata**: View dimensions, variables, and allowed values with `SISTAT_DataStructure(table_id, language := 'en')`.
 - **Direct Querying**: Read full datasets into DuckDB tables with `SISTAT_Read(table_id, language := 'en')`; use SQL `WHERE` and `LIMIT` as needed.
 - **Live Data**: Always fetches the latest data from the official API.
+- **Current Table Count**: Latest successful count run reports **4,597 tables** (see [SiStat Table Count workflow](https://github.com/fklezin/duckdb-sistat/actions/workflows/SistatTableCount.yml)).
 
 All functions accept an optional `language` argument (e.g. `'en'`, `'sl'`). You can pass `table_id` with or without the `.px` suffix; the extension normalizes it.
 
