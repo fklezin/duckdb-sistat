@@ -161,14 +161,6 @@ Inputs used:
 - National usable production (2020): `725.46` thousand hl = `72,546,000` litres
 - Vineyard area shares (2020): Podravje `6,244.2 ha`, Posavje `2,552.1 ha`, Primorje `6,437.4 ha`
 
-Estimated litres by wine region (2020):
-
-| Region | Estimated litres | Share |
-|---|---:|---:|
-| Primorje | 30,656,217 | 42.26% |
-| Podravje | 29,736,160 | 40.99% |
-| Posavje | 12,153,623 | 16.75% |
-
 Quick plot (estimated, in million litres):
 
 ```text
@@ -235,21 +227,6 @@ FROM agg, total
 ORDER BY area_ha DESC
 LIMIT 10;
 ```
-
-Current top 10 (2020):
-
-| Grape variety | Area (ha) | Share of all varieties (%) |
-|---|---:|
-| Ostale bele sorte | 1,823.7 | 11.96 |
-| Laski rizling | 1,772.9 | 11.62 |
-| Refosk | 1,331.6 | 8.73 |
-| Chardonnay | 1,163.5 | 7.63 |
-| Sauvignon | 1,154.2 | 7.57 |
-| Malvazija | 970.4 | 6.36 |
-| Zametovka | 774.4 | 5.08 |
-| Merlot | 682.1 | 4.47 |
-| Rumeni muskat | 657.8 | 4.31 |
-| Modra frankinja | 652.3 | 4.28 |
 
 Quick plot (area in hectares):
 
