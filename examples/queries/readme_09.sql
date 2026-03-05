@@ -14,13 +14,17 @@ agg AS (
     AND TRY_CAST("LETO" AS INTEGER) = latest_year.y
   GROUP BY 1
 ),
-total AS (
-  SELECT SUM(area_ha) AS total_area
+filtered AS (
+  SELECT *
   FROM agg
+  WHERE sort_code <> '1.14'
+),
+filtered_total AS (
+  SELECT SUM(area_ha) AS total_area
+  FROM filtered
 )
 SELECT
   CASE sort_code
-    WHEN '1.14' THEN 'Ostale bele sorte'
     WHEN '1.04' THEN 'Laski rizling'
     WHEN '2.08' THEN 'Refosk'
     WHEN '1.02' THEN 'Chardonnay'
@@ -30,10 +34,11 @@ SELECT
     WHEN '2.04' THEN 'Merlot'
     WHEN '1.08' THEN 'Rumeni muskat'
     WHEN '2.05' THEN 'Modra frankinja'
+    WHEN '1.06' THEN 'Rebula'
     ELSE sort_code
   END AS grape_variety,
   ROUND(area_ha, 1) AS area_ha,
-  ROUND(100.0 * area_ha / total.total_area, 2) AS share_all_pct
-FROM agg, total
+  ROUND(100.0 * area_ha / filtered_total.total_area, 2) AS share_all_pct
+FROM filtered, filtered_total
 ORDER BY area_ha DESC
 LIMIT 10;

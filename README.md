@@ -186,6 +186,7 @@ WHERE "PROIZVODNJA IN PORABA" = '1.1.'
 
 Using SiStat table `1528317S.px`, aggregate vineyard area by grape variety and rank the top 10.
 This gives variety shares in the latest available year (`2020`) and includes examples like Refošk, Chardonnay, and Modra frankinja.
+The combined category `Ostale bele sorte` is excluded.
 
 ```sql
 -- @README.md
@@ -203,13 +204,17 @@ agg AS (
     AND TRY_CAST("LETO" AS INTEGER) = latest_year.y
   GROUP BY 1
 ),
-total AS (
-  SELECT SUM(area_ha) AS total_area
+filtered AS (
+  SELECT *
   FROM agg
+  WHERE sort_code <> '1.14'
+),
+filtered_total AS (
+  SELECT SUM(area_ha) AS total_area
+  FROM filtered
 )
 SELECT
   CASE sort_code
-    WHEN '1.14' THEN 'Ostale bele sorte'
     WHEN '1.04' THEN 'Laski rizling'
     WHEN '2.08' THEN 'Refosk'
     WHEN '1.02' THEN 'Chardonnay'
@@ -219,11 +224,12 @@ SELECT
     WHEN '2.04' THEN 'Merlot'
     WHEN '1.08' THEN 'Rumeni muskat'
     WHEN '2.05' THEN 'Modra frankinja'
+    WHEN '1.06' THEN 'Rebula'
     ELSE sort_code
   END AS grape_variety,
   ROUND(area_ha, 1) AS area_ha,
-  ROUND(100.0 * area_ha / total.total_area, 2) AS share_all_pct
-FROM agg, total
+  ROUND(100.0 * area_ha / filtered_total.total_area, 2) AS share_all_pct
+FROM filtered, filtered_total
 ORDER BY area_ha DESC
 LIMIT 10;
 ```
@@ -231,16 +237,16 @@ LIMIT 10;
 Quick plot (area in hectares):
 
 ```text
-Ostale bele sorte | ######################################## 1823.7
-Laski rizling     | #######################################  1772.9
-Refosk            | #############################            1331.6
-Chardonnay        | ##########################               1163.5
-Sauvignon         | #########################                1154.2
-Malvazija         | #####################                     970.4
-Zametovka         | #################                         774.4
-Merlot            | ###############                           682.1
-Rumeni muskat     | ##############                            657.8
-Modra frankinja   | ##############                            652.3
+Laski rizling   | ######################################## 1772.9
+Refosk          | ##############################           1331.6
+Chardonnay      | ##########################               1163.5
+Sauvignon       | ##########################               1154.2
+Malvazija       | ######################                    970.4
+Zametovka       | #################                         774.4
+Merlot          | ###############                           682.1
+Rumeni muskat   | ##############                            657.8
+Modra frankinja | ##############                            652.3
+Rebula          | #############                             612.7
 ```
 
 ## Configuration
