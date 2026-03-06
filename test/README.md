@@ -9,3 +9,8 @@ or
 ```bash
 make test_debug
 ```
+
+For a live end-to-end smoke test against the SiStat API, run:
+```bash
+./test/e2e_sistat_smoke.sh
+```

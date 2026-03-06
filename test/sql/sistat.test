@@ -8,3 +8,95 @@ require sistat
 # Confirm it loaded by checking if the function exists
 statement ok
 SELECT * FROM SISTAT_Tables() WHERE 1=0;
+
+# The catalog should be populated and contain known stable tables in both languages.
+statement ok
+CREATE OR REPLACE TEMP TABLE sistat_tables_en AS
+SELECT * FROM SISTAT_Tables(language := 'en');
+
+query I
+SELECT CASE WHEN COUNT(*) > 4000 THEN 1 ELSE 0 END
+FROM sistat_tables_en;
+----
+1
+
+query I
+SELECT COUNT(*)
+FROM sistat_tables_en
+WHERE table_id = '05C1002S.px'
+  AND url = 'https://pxweb.stat.si/SiStatData/api/v1/en/Data/05C1002S.px';
+----
+1
+
+query I
+SELECT COUNT(*)
+FROM SISTAT_Tables(language := 'sl')
+WHERE table_id = '05C1002S.px';
+----
+1
+
+# Empty table identifiers should be rejected before any request is issued.
+statement error
+SELECT * FROM SISTAT_DataStructure('');
+----
+cannot be empty
+
+statement error
+SELECT * FROM SISTAT_Read('');
+----
+cannot be empty
+
+# Metadata fetch should expose known dimensions and normalize missing .px suffixes.
+statement ok
+CREATE OR REPLACE TEMP TABLE sistat_structure_05c1002s AS
+SELECT * FROM SISTAT_DataStructure('05C1002S', language := 'en');
+
+query I
+SELECT COUNT(*)
+FROM sistat_structure_05c1002s
+WHERE variable_code = 'SPOL'
+  AND variable_text = 'SEX';
+----
+1
+
+query I
+SELECT COUNT(*)
+FROM (
+    SELECT * FROM sistat_structure_05c1002s
+    EXCEPT
+    SELECT * FROM SISTAT_DataStructure('05C1002S.px', language := 'en')
+);
+----
+0
+
+query I
+SELECT COUNT(*)
+FROM (
+    SELECT * FROM SISTAT_DataStructure('05C1002S.px', language := 'en')
+    EXCEPT
+    SELECT * FROM sistat_structure_05c1002s
+);
+----
+0
+
+# Reading a known table should materialize rows and preserve known historical facts.
+statement ok
+CREATE OR REPLACE TEMP TABLE sistat_read_05c1002s AS
+SELECT * FROM SISTAT_Read('05C1002S', language := 'en');
+
+query I
+SELECT CASE WHEN COUNT(*) > 30000 THEN 1 ELSE 0 END
+FROM sistat_read_05c1002s;
+----
+1
+
+query I
+SELECT COUNT(*)
+FROM sistat_read_05c1002s
+WHERE "KOHEZIJSKA REGIJA" = '0'
+  AND "STAROST" = '999'
+  AND "POLLETJE" = '2008H1'
+  AND "SPOL" = '0'
+  AND TRY_CAST(value AS BIGINT) = 2025866;
+----
+1
