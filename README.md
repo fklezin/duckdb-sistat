@@ -14,6 +14,7 @@ This extension integrates the **Statistical Office of the Republic of Slovenia (
 - [Usage](#usage)
 - [Usecases](#usecases)
 - [Configuration](#configuration)
+- [Data Copyright](#data-copyright)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -252,6 +253,19 @@ LIMIT 10;
 ## Configuration
 
 The extension uses DuckDB's built-in HTTP capabilities. It respects proxy settings if configured in DuckDB.
+
+## Data Copyright
+
+SiStat data published by the Statistical Office of the Republic of Slovenia is available royalty-free for personal, non-commercial, and commercial use. When you reuse data or information obtained through this extension, acknowledge the source as either `Source: Statistical Office of the Republic of Slovenia` or `Source: SURS`.
+
+If you modify, derive, or recalculate the published data, mark that change clearly. For example:
+
+```text
+Source: SURS
+Calculated by <your organisation or project>
+```
+
+This general permission applies to SURS data and information, not necessarily to third-party visual assets or materials linked from their website. See the official policy: http://stat.si/StatWeb/en/StaticPages/Index/copyright
 
 ## Contributing
 
