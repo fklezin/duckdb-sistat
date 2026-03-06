@@ -223,8 +223,9 @@ HttpResponseData HttpRequest::ExecuteHttpRequest(const HttpSettings &settings, c
 			return result;
 		}
 
-		result.error = last_error.empty() ? StringUtil::Format("HTTP request failed for %s %s", method.c_str(), url.c_str())
-		                                  : last_error;
+		result.error = last_error.empty()
+		                   ? StringUtil::Format("HTTP request failed for %s %s", method.c_str(), url.c_str())
+		                   : last_error;
 
 	} catch (std::exception &e) {
 		result.error = e.what();
