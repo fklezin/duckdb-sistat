@@ -81,6 +81,7 @@ HttpSettings HttpRequest::ExtractHttpSettings(ClientContext &context, const stri
 
 	settings.timeout = 30;
 	settings.keep_alive = true;
+	settings.enable_server_cert_verification = true;
 	settings.max_concurrency = DEFAULT_HTTP_MAX_CONCURRENT;
 	settings.use_cache = true;
 	settings.follow_redirects = true;
@@ -91,10 +92,13 @@ HttpSettings HttpRequest::ExtractHttpSettings(ClientContext &context, const stri
 
 	FileOpener::TryGetCurrentSetting(&opener, "http_timeout", settings.timeout, &info);
 	FileOpener::TryGetCurrentSetting(&opener, "http_keep_alive", settings.keep_alive, &info);
+	FileOpener::TryGetCurrentSetting(&opener, "enable_server_cert_verification",
+	                                 settings.enable_server_cert_verification, &info);
 
 	FileOpener::TryGetCurrentSetting(&opener, "http_proxy", settings.proxy, &info);
 	FileOpener::TryGetCurrentSetting(&opener, "http_proxy_username", settings.proxy_username, &info);
 	FileOpener::TryGetCurrentSetting(&opener, "http_proxy_password", settings.proxy_password, &info);
+	FileOpener::TryGetCurrentSetting(&opener, "ca_cert_file", settings.ca_cert_file, &info);
 
 	string custom_user_agent;
 	if (FileOpener::TryGetCurrentSetting(&opener, "http_user_agent", custom_user_agent, &info) &&
@@ -125,7 +129,10 @@ HttpResponseData HttpRequest::ExecuteHttpRequest(const HttpSettings &settings, c
 			duckdb_httplib_openssl::Client client(proto_host_port);
 			client.set_follow_location(settings.follow_redirects);
 			client.set_decompress(false);
-			client.enable_server_certificate_verification(false);
+			client.enable_server_certificate_verification(settings.enable_server_cert_verification);
+			if (settings.enable_server_cert_verification && !settings.ca_cert_file.empty()) {
+				client.set_ca_cert_path(settings.ca_cert_file);
+			}
 
 			auto timeout_sec = static_cast<time_t>(settings.timeout);
 			client.set_read_timeout(timeout_sec, 0);

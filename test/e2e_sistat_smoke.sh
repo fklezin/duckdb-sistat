@@ -19,16 +19,22 @@ run_query() {
   local sql="$1"
   local attempt
   local output
+  local last_error=""
 
   for attempt in 1 2 3 4 5 6 7 8; do
-    if output="$("$DUCKDB_BIN" -csv -c "LOAD '$EXT_PATH'; COPY ($sql) TO STDOUT (FORMAT CSV, HEADER FALSE);" 2>/dev/null)"; then
+    if output="$("$DUCKDB_BIN" -csv -c "LOAD '$EXT_PATH'; COPY ($sql) TO STDOUT (FORMAT CSV, HEADER FALSE);" 2>&1)"; then
       printf '%s\n' "$output"
       return 0
     fi
+    last_error="$output"
     sleep $((attempt * 2))
   done
 
   echo "query failed after retries: $sql" >&2
+  if [[ -n "$last_error" ]]; then
+    echo "last error:" >&2
+    echo "$last_error" >&2
+  fi
   return 1
 }
 

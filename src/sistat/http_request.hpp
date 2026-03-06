@@ -17,9 +17,11 @@ namespace duckdb {
 struct HttpSettings {
 	uint64_t timeout;
 	bool keep_alive;
+	bool enable_server_cert_verification;
 	string proxy;
 	string proxy_username;
 	string proxy_password;
+	string ca_cert_file;
 	string user_agent;
 	uint64_t max_concurrency;
 	bool use_cache;
