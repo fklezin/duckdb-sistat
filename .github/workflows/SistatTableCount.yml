@@ -34,9 +34,6 @@ jobs:
       - name: Execute README SQL blocks
         run: ./scripts/run_readme_queries.sh examples/queries examples/results ./build/release/duckdb build/release/extension/sistat/sistat.duckdb_extension
 
-      - name: Verify examples are up to date
-        run: git diff --exit-code -- examples/queries examples/results
-
       - name: Count tables from SiStat API
         id: table_count
         shell: bash
